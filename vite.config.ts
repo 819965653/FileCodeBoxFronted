@@ -16,5 +16,8 @@ export default defineConfig({
     postcss: {
       plugins: [tailwindcss, autoprefixer]
     }
+  },
+  build: {
+    outDir: '../FIleCodeBox/themes/2024'
   }
 })

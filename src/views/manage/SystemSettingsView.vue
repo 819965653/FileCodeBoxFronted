@@ -28,6 +28,7 @@ const config = ref<ConfigState>({
   enableChunk: 0,
   uploadMinute: 1,
   max_save_seconds: 0,
+  max_storage_size: 1024 * 1024 * 1024 * 10,
   opacity: 0.9,
   s3_access_key_id: '',
   background: '',
@@ -49,6 +50,10 @@ const config = ref<ConfigState>({
 
 const fileSize = ref(1)
 const sizeUnit = ref('MB')
+
+// 添加最大存储容量相关的响应式变量
+const maxStorageSize = ref(10)
+const maxStorageSizeUnit = ref('GB')
 
 // 添加保存时间相关的响应式变量
 const saveTime = ref(1)
@@ -85,6 +90,19 @@ const refreshData = async () => {
       } else {
         fileSize.value = Math.round(size / 1024)
         sizeUnit.value = 'KB'
+      }
+
+      // 将最大存储容量转换为合适的单位
+      const maxSize = config.value.max_storage_size
+      if (maxSize >= 1024 * 1024 * 1024) {
+        maxStorageSize.value = Math.round(maxSize / (1024 * 1024 * 1024))
+        maxStorageSizeUnit.value = 'GB'
+      } else if (maxSize >= 1024 * 1024) {
+        maxStorageSize.value = Math.round(maxSize / (1024 * 1024))
+        maxStorageSizeUnit.value = 'MB'
+      } else {
+        maxStorageSize.value = Math.round(maxSize / 1024)
+        maxStorageSizeUnit.value = 'KB'
       }
 
       // 时间单位转换逻辑
@@ -126,6 +144,7 @@ const convertToBytes = (size: number, unit: string): number => {
 const submitSave = () => {
   const formData = { ...config.value }
   formData.uploadSize = convertToBytes(fileSize.value, sizeUnit.value)
+  formData.max_storage_size = convertToBytes(maxStorageSize.value, maxStorageSizeUnit.value)
 
   // 如果保存时间为0，则默认设置为7天
   if (saveTime.value === 0) {
@@ -593,6 +612,32 @@ refreshData()
                   <option value="KB">{{ t('manage.settings.fileSizeUnits.kb') }}</option>
               <option value="MB">{{ t('manage.settings.fileSizeUnits.mb') }}</option>
               <option value="GB">{{ t('manage.settings.fileSizeUnits.gb') }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-sm font-medium" :class="[isDarkMode ? 'text-gray-300' : 'text-gray-700']">
+                {{ t('manage.settings.maxStorageSize') }}
+              </label>
+              <div class="flex items-center space-x-2">
+                <input type="number" v-model="maxStorageSize"
+                  class="w-24 rounded-md shadow-sm px-4 py-2.5 transition-all duration-200 ease-in-out border focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                  :class="[
+                    isDarkMode
+                      ? 'bg-gray-700 border-gray-600 text-white placeholder-gray-400 hover:border-gray-500'
+                      : 'border-gray-300 hover:border-gray-400 placeholder-gray-500'
+                  ]" />
+                <select v-model="maxStorageSizeUnit"
+                  class="rounded-md shadow-sm px-4 py-2.5 transition-all duration-200 ease-in-out border focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                  :class="[
+                    isDarkMode
+                      ? 'bg-gray-700 border-gray-600 text-white hover:border-gray-500'
+                      : 'border-gray-300 hover:border-gray-400'
+                  ]">
+                  <option value="KB">KB</option>
+                  <option value="MB">MB</option>
+                  <option value="GB">GB</option>
                 </select>
               </div>
             </div>

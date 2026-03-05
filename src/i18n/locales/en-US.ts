@@ -323,6 +323,7 @@ export default {
     settings: {
       title: 'System Settings',
       basicSettings: 'General',
+      maxStorageSize: 'Max Storage Size',
       websiteInfo: 'Site Information',
       websiteName: 'Site Name',
       websiteDescription: 'Site Description',

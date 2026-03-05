@@ -99,6 +99,7 @@ export interface ConfigState {
   storage_path: string
   uploadMinute: number
   max_save_seconds: number
+  max_storage_size: number
   opacity: number
   enableChunk: number
   s3_access_key_id: string

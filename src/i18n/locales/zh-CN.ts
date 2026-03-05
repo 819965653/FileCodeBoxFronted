@@ -119,6 +119,7 @@ export default {
       uploadCountLimit: '允许上传文件数（限流窗口内最多上传几个文件）',
       files: '个文件',
       fileSizeLimit: '单文件大小上限',
+      maxStorageSize: '最大存储容量',
       expirationMethod: '过期方式',
       expirationType: '过期方式',
       expiration: {
@@ -384,6 +385,7 @@ export default {
       uploadPerMinute: '限流时间窗口（在此时间内限制上传次数）',
       uploadCountLimit: '允许上传文件数（限流窗口内最多上传几个文件）',
       fileSizeLimit: '单文件大小上限',
+      maxStorageSize: '最大存储容量',
       expiration: {
         day: '按天数',
         hour: '按小时',
