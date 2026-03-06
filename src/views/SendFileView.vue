@@ -585,6 +585,8 @@ const {
 const fileHash = ref('')
 
 const handleFileSelected = async (file: File) => {
+  // 先获取最新配置
+  await fetchLatestConfig()
   selectedFile.value = file
   if (!checkOpenUpload()) return
   if (!checkFileSize(file)) return
@@ -593,6 +595,8 @@ const handleFileSelected = async (file: File) => {
 
 const handleFileDrop = async (event: DragEvent) => {
   if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+    // 先获取最新配置
+    await fetchLatestConfig()
     const file = event.dataTransfer.files[0]
     selectedFile.value = file
     if (!checkUpload()) return
@@ -615,6 +619,8 @@ const handlePaste = async (event: ClipboardEvent) => {
           return
         }
 
+        // 先获取最新配置
+        await fetchLatestConfig()
         selectedFile.value = file
         if (!checkUpload()) return
 
@@ -959,6 +965,21 @@ const checkOpenUpload = () => {
   return true
 }
 
+// 从服务器获取最新配置
+const fetchLatestConfig = async () => {
+  try {
+    const response: ApiResponse<Config> = await api.get('/')
+    if (response.code === 200 && response.detail) {
+      // 更新本地配置
+      Object.assign(config, response.detail)
+      // 保存到 localStorage
+      localStorage.setItem('config', JSON.stringify(config))
+    }
+  } catch (error) {
+    console.error('Failed to fetch latest config:', error)
+  }
+}
+
 const checkFileSize = (file: File) => {
   if (file.size > config.uploadSize) {
     alertStore.showAlert(
@@ -1006,6 +1027,9 @@ const handleSubmit = async () => {
   isSubmitting.value = true
 
   try {
+    // 先获取最新配置
+    await fetchLatestConfig()
+
     if (sendType.value === 'file' && !selectedFile.value) {
       alertStore.showAlert(t('send.messages.selectFile'), 'error')
       return
